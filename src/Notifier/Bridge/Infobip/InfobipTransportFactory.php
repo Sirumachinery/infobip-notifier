@@ -27,7 +27,7 @@ class InfobipTransportFactory extends AbstractTransportFactory
             return (new InfobipTransport($apiKey, $from, $this->client, $this->dispatcher))->setHost($host)->setPort($port);
         }
 
-        throw new UnsupportedSchemeException($dsn, 'twilio', $this->getSupportedSchemes());
+        throw new UnsupportedSchemeException($dsn, 'infobip', $this->getSupportedSchemes());
     }
 
     protected function getSupportedSchemes(): array
