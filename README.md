@@ -5,8 +5,8 @@ Provides Infobip integration for Symfony Notifier.
 ## Requirements
 
 - PHP 7.2
-- Symfony Notifier and HttpClient
-- API key and base url from Infobip
+- Symfony Notifier, HttpClient and EventDispatcher components
+- Your API key and base url from Infobip
 
 ## Installation
 
@@ -14,7 +14,7 @@ Provides Infobip integration for Symfony Notifier.
 $ composer require sirumobile/infobip-notifier
 ```
 
-Add correct DSN with your Infobip API key and API base url to ENV. Then configure notifier and
+Add correct DSN with your Infobip credentials to ENV. Then configure notifier and
 add InfobipTransportFactory to your services.
 
 ```dotenv
