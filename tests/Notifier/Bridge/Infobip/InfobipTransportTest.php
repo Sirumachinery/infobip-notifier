@@ -52,7 +52,7 @@ class InfobipTransportTest extends TestCase
             $this->assertArrayHasKey('headers', $options);
             $this->assertContains('Authorization: App key', $options['headers']);
             $this->assertContains('Content-Type: application/json', $options['headers']);
-            $this->assertEquals('{"messages":[{"from":"from","destinations":[{"to":"1234"}],"text":"My message"}]}', $options['body']);
+            $this->assertEquals('{"messages":[{"from":"from","destinations":[{"to":"1234"}],"text":"My message","notifyUrl":"https:\/\/localhost\/notify"}]}', $options['body']);
 
             $requestCount++;
             return new MockResponse();
@@ -61,6 +61,7 @@ class InfobipTransportTest extends TestCase
         $client = new MockHttpClient($callback);
         $message = new SmsMessage('1234', 'My message');
         $transport = new InfobipTransport('key', 'from', $client);
+        $transport->setNotifyUrl('https://localhost/notify');
         $transport->send($message);
         $this->assertEquals(1, $requestCount);
     }

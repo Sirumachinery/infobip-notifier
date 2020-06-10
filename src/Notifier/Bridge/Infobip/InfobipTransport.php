@@ -20,12 +20,20 @@ class InfobipTransport extends AbstractTransport
 
     private $from;
 
+    private $notifyUrl;
+
     public function __construct(string $apiKey, string $from, HttpClientInterface $client = null, EventDispatcherInterface $dispatcher = null)
     {
         $this->apiKey = $apiKey;
         $this->from = $from;
 
         parent::__construct($client, $dispatcher);
+    }
+
+    public function setNotifyUrl(?string $notifuUrl) : self
+    {
+        $this->notifyUrl = $notifuUrl;
+        return $this;
     }
 
     protected function doSend(MessageInterface $message): void
@@ -41,15 +49,7 @@ class InfobipTransport extends AbstractTransport
             ],
             'json' => [
                 'messages' => [
-                    [
-                        'from' => $this->from,
-                        'destinations' => [
-                            [
-                                'to' => $message->getPhone()
-                            ]
-                        ],
-                        'text' => $message->getSubject()
-                    ]
+                    $this->messageToArray($message)
                 ],
             ],
         ]);
@@ -61,6 +61,25 @@ class InfobipTransport extends AbstractTransport
         }
     }
 
+    private function messageToArray(SmsMessage $message) : array
+    {
+        $messageArray = [
+            'from' => $this->from,
+            'destinations' => [
+                [
+                    'to' => $message->getPhone()
+                ]
+            ],
+            'text' => $message->getSubject()
+        ];
+
+        if (null !== $this->notifyUrl) {
+            $messageArray['notifyUrl'] = $this->notifyUrl;
+        }
+
+        return $messageArray;
+    }
+
     public function supports(MessageInterface $message): bool
     {
         return $message instanceof SmsMessage;
@@ -70,4 +89,5 @@ class InfobipTransport extends AbstractTransport
     {
         return sprintf('infobip://%s?from=%s', $this->getEndpoint(), $this->from);
     }
+
 }

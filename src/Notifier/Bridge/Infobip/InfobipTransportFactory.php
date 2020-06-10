@@ -22,9 +22,13 @@ class InfobipTransportFactory extends AbstractTransportFactory
         $from = $dsn->getOption('from');
         $host = 'default' === $dsn->getHost() ? null : $dsn->getHost();
         $port = $dsn->getPort();
+        $notifyUrl = $dsn->getOption('notifyUrl') ?: null;
 
         if ('infobip' === $scheme) {
-            return (new InfobipTransport($apiKey, $from, $this->client, $this->dispatcher))->setHost($host)->setPort($port);
+            return (new InfobipTransport($apiKey, $from, $this->client, $this->dispatcher))
+                ->setHost($host)
+                ->setPort($port)
+                ->setNotifyUrl($notifyUrl);
         }
 
         throw new UnsupportedSchemeException($dsn, 'infobip', $this->getSupportedSchemes());
