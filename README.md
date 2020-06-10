@@ -35,3 +35,13 @@ framework:
 Siru\Notifier\Bridge\Infobip\InfobipTransportFactory:
     tags: [ texter.transport_factory ]
 ```
+
+## Delivery reports
+
+You can add notifyUrl-option where Infobip will send delivery reports for each message. You will
+need to implement the callback controller yourself. Check Infobip API documentation for example payload.
+
+```dotenv
+# .env
+INFOBIP_DSN=infobip://YOUR_APIKEY@YOUR_API_HOST?from=SENDER_NAME&notifyUrl=https://yourapplication/callback/path
+```
