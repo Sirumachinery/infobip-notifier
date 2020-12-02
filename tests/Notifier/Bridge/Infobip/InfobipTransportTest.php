@@ -55,15 +55,19 @@ class InfobipTransportTest extends TestCase
             $this->assertEquals('{"messages":[{"from":"from","destinations":[{"to":"1234"}],"text":"My message","notifyUrl":"https:\/\/localhost\/notify"}]}', $options['body']);
 
             $requestCount++;
-            return new MockResponse();
+            return new MockResponse('{"bulkId": "2034072219640523072","messages": [{"to": "1234","status": {"groupId": 1,"groupName": "PENDING","id": 26,"name": "MESSAGE_ACCEPTED","description": "Message sent to next instance"},"messageId": "2250be2d4219-3af1-78856-aabe-1362af1edfd2"}]}');
         };
 
         $client = new MockHttpClient($callback);
         $message = new SmsMessage('1234', 'My message');
         $transport = new InfobipTransport('key', 'from', $client);
         $transport->setNotifyUrl('https://localhost/notify');
-        $transport->send($message);
+        $sentMessage = $transport->send($message);
+
         $this->assertEquals(1, $requestCount);
+        $this->assertEquals('2250be2d4219-3af1-78856-aabe-1362af1edfd2', $sentMessage->getMessageId());
+        $this->assertSame($message, $sentMessage->getOriginalMessage());
+        $this->assertEquals((string) $transport, $sentMessage->getTransport());
     }
 
     public function testApiError()

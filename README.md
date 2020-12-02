@@ -5,7 +5,7 @@ Provides Infobip integration for Symfony Notifier.
 ## Requirements
 
 - PHP 7.2
-- Symfony 4.3 - 5.1 Notifier, HttpClient and EventDispatcher components
+- Symfony Notifier 5.2+, HttpClient and EventDispatcher components
 - Your API key and base url from Infobip
 
 ## Installation

@@ -6,6 +6,7 @@ namespace Siru\Notifier\Bridge\Infobip;
 use Symfony\Component\Notifier\Exception\LogicException;
 use Symfony\Component\Notifier\Exception\TransportException;
 use Symfony\Component\Notifier\Message\MessageInterface;
+use Symfony\Component\Notifier\Message\SentMessage;
 use Symfony\Component\Notifier\Message\SmsMessage;
 use Symfony\Component\Notifier\Transport\AbstractTransport;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -36,7 +37,7 @@ class InfobipTransport extends AbstractTransport
         return $this;
     }
 
-    protected function doSend(MessageInterface $message): void
+    protected function doSend(MessageInterface $message): SentMessage
     {
         if (!$message instanceof SmsMessage) {
             throw new LogicException(sprintf('The "%s" transport only supports instances of "%s" (instance of "%s" given).', __CLASS__, SmsMessage::class, \get_class($message)));
@@ -59,6 +60,18 @@ class InfobipTransport extends AbstractTransport
 
             throw new TransportException('Unable to send the SMS: ' . $error['requestError']['serviceException']['text'], $response);
         }
+
+        $sentMessage = new SentMessage($message, (string) $this);
+
+        $responseArray = $response->toArray();
+        foreach ($responseArray['messages'] as $report) {
+            if ($report['to'] === $message->getPhone()) {
+                $sentMessage->setMessageId($report['messageId']);
+                break;
+            }
+        }
+
+        return $sentMessage;
     }
 
     private function messageToArray(SmsMessage $message) : array
