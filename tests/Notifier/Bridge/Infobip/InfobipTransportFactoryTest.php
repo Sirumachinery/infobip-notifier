@@ -15,13 +15,13 @@ class InfobipTransportFactoryTest extends TestCase
     public function testSupportedSchemes()
     {
         $factory = new InfobipTransportFactory();
-        $this->assertTrue($factory->supports(new Dsn('infobip', 'localhost')));
-        $this->assertFalse($factory->supports(new Dsn('foobar', 'localhost')));
+        $this->assertTrue($factory->supports(new Dsn('infobip://localhost')));
+        $this->assertFalse($factory->supports(new Dsn('foobar://localhost')));
     }
 
     public function testCreatesTransport()
     {
-        $dsn = new Dsn('infobip', 'localhost', 'apikey', null, null, ['from' => 'myname']);
+        $dsn = new Dsn('infobip://apikey@localhost?from=myname');
         $factory = new InfobipTransportFactory();
 
         $transport = $factory->create($dsn);
@@ -30,11 +30,11 @@ class InfobipTransportFactoryTest extends TestCase
 
     public function testInvalidScheme()
     {
-        $dsn = new Dsn('foobar', 'localhost', 'apikey', null, null, ['from' => 'myname']);
+        $dsn = new Dsn('foobar://apikey@localhost?from=myname');
         $factory = new InfobipTransportFactory();
 
         $this->expectException(UnsupportedSchemeException::class);
-        $transport = $factory->create($dsn);
+        $factory->create($dsn);
     }
 
 }
